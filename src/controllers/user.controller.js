@@ -52,8 +52,9 @@ class userController {
                     req,
                     res,
                     status: status,
-                    message: data,
-                    statusCode: 422,
+                    message: "User Already Exist",
+                    data: data,
+                    statusCode: 200,
                 })
             }
         } catch (error) {
