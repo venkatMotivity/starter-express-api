@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const { auth } = require('express-oauth2-jwt-bearer');
 const config = require('../../config/config');
 // const { APILog } = require('../database/models');
 const {
@@ -19,7 +20,10 @@ const {
 //     JsonWebTokenError
 // } = jwt;
 
-
+module.exports.checkJwt = auth({
+    audience: 'https://dev-w1bmqazbzn600xvo.us.auth0.com/api/v2/',
+    issuerBaseURL: `http://localhost:3000/`,
+});
 const catchError = (err, res) => {
     if (err instanceof TokenExpiredError) {
         return res.status(401).send({
@@ -68,16 +72,17 @@ const catchError = (err, res) => {
 module.exports.authenticate = (req, res, next) => {
     const accessToken = req.headers['authorization'];
     const refreshToken = req.cookies['refreshToken'];
-
     if (!accessToken && !refreshToken) {
         return res.status(401).send('Access Denied. No token provided.');
     }
     console.log("accessToken", accessToken);
 
     try {
-        const decoded = jwt.verify(accessToken.replace(/^Bearer\s/, ''), config.jwt.secret);
-        console.log("decoded", decoded);
-        req.userId = decoded.sub;
+        // const decoded = jwt.verify(accessToken.replace(/^Bearer\s/, ''), config.jwt.secret);
+        // console.log("decoded", decoded);
+        console.log("req.headers", req.headers);
+        req.userId = req.headers['user-id'];
+        console.log("userId", req.userId);
         next();
     } catch (error) {
         console.log("error", error);

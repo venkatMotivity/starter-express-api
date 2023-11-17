@@ -8,8 +8,7 @@ const {
 
 const seachHistorySchema = mongoose.Schema({
     user: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'User',
+        type: mongoose.SchemaTypes.String,
         required: true,
     },
     input: {

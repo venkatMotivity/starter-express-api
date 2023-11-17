@@ -15,6 +15,8 @@ const routesv1 = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middleware/error');
 const ApiError = require('./utils/ApiError');
 const { checkUserAuthStatus } = require('./middleware/auth.middleware');
+const { auth } = require('express-oauth2-jwt-bearer');
+
 
 const app = express();
 
@@ -79,7 +81,7 @@ var corsOptions = {
   methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   credentials: true, //Credentials are cookies, authorization headers or TLS client certificates.
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'device-remember-token', 'Access-Control-Allow-Origin', 'Origin', 'Accept']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'device-remember-token', 'Access-Control-Allow-Origin', 'Origin', 'Accept', 'user-id']
 };
 
 app.use(cors(corsOptions));
@@ -96,7 +98,12 @@ app.use(function customErrorHandler(err, req, res, next) {
   return false;
 });
 
-
+app.use(auth({
+  audience: 'https://dev-w1bmqazbzn600xvo.us.auth0.com/api/v2/',
+  issuerBaseURL: `http://localhost:3000/`,
+  scope: "openid app_metadata metadata"
+},
+))
 
 // IsAuth 
 // app.use(checkUserAuthStatus);
